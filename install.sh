@@ -94,41 +94,6 @@ if ! git clone "$REPO_URL" "$CONFIG_DIR"; then
     exit 1
 fi
 
-# Create minimal bootstrap script
-BOOTSTRAP_INIT="$CONFIG_DIR/bootstrap.lua"
-cat > "$BOOTSTRAP_INIT" << 'BOOTSCRIPT'
--- Minimal bootstrap for headless plugin install
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if vim.uv.fs_stat(lazypath) == nil then
-  vim.fn.system({
-    "git", "clone", "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
-    lazypath,
-  })
-end
-vim.opt.rtp:prepend(lazypath)
-
--- Load plugins and sync
-require("config.03-plugins")
-vim.defer_fn(function()
-  require("lazy").sync({ wait = true })
-  vim.cmd("qa")
-end, 0)
-BOOTSCRIPT
-
-# Install plugins using bootstrap init
-echo "Installing plugins..."
-set +e
-nvim --headless -u "$BOOTSTRAP_INIT" -c "qa" 2>&1
-RESULT=$?
-rm -f "$BOOTSTRAP_INIT"
-set -e
-
-if [ $RESULT -ne 0 ]; then
-    echo "Error: Failed to install plugins"
-    exit 1
-fi
-
 echo ""
-echo "Installation complete! Run 'nvim' to start."
+echo "Installation complete!"
+echo "Run 'nvim' to start - plugins will install automatically on first run."
