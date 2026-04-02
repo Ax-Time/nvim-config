@@ -6,7 +6,7 @@ map("n", "<leader>n", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<leader>p", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
 map("n", "<leader>e", "<cmd>Explore<cr>", { desc = "Open explorer" })
 
-map("n", "<leader>tv", "<cmd>vsplit<cr><cmd>terminal<cr>", { desc = "Terminal vertical" })
+map("n", "<leader>tv", "<cmd>vsplit<bar>terminal<cr>", { desc = "Terminal vertical" })
 map("t", "<esc>", "<c-\\><c-n>", { desc = "Exit terminal mode" })
 
 map("n", "<c-h>", "<c-w>h", { desc = "Window left" })
