@@ -25,7 +25,7 @@ detect_os() {
 # Check/install Neovim
 check_nvim() {
     if command -v nvim &>/dev/null; then
-        local version=$(nvim --version | head -1 | grep -oP '\d+\.\d+' | head -1)
+        local version=$(nvim --version | head -1 | awk '/[0-9]+\.[0-9]+/ {match($0, /[0-9]+\.[0-9]+/); print substr($0, RSTART, RLENGTH); exit}')
         if [ -n "$version" ]; then
             echo "Neovim $version found"
             return 0
@@ -70,9 +70,16 @@ if [ "$OS" = "unsupported" ]; then
     exit 1
 fi
 
+set +e
 if ! check_nvim; then
+    set -e
     install_nvim "$OS"
+    if ! check_nvim; then
+        echo "Error: Neovim installation verification failed"
+        exit 1
+    fi
 fi
+set -e
 
 # Backup existing config
 if [ -d "$CONFIG_DIR" ]; then
@@ -83,11 +90,21 @@ fi
 
 # Clone repo
 echo "Cloning config to $CONFIG_DIR"
-git clone "$REPO_URL" "$CONFIG_DIR"
+if ! git clone "$REPO_URL" "$CONFIG_DIR"; then
+    echo "Error: Failed to clone repository"
+    exit 1
+fi
 
 # Install plugins
 echo "Installing plugins..."
+set +e
 nvim --headless "+Lazy! sync" +qa
+if [ $? -ne 0 ]; then
+    set -e
+    echo "Error: Failed to install plugins"
+    exit 1
+fi
+set -e
 
 echo ""
 echo "Installation complete! Run 'nvim' to start."
