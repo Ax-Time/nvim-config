@@ -12,17 +12,19 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Setup plugins (this registers plugin specs with lazy.nvim)
+-- Setup plugins
 require("config.03-plugins")
 
--- Load non-plugin-dependent configs first
+-- Load non-plugin-dependent configs
 require("config.00-init")
 require("config.02-keymaps")
 
--- Load configs that require plugins (they'll be lazily loaded by their plugins)
-require("config.01-colors")
-require("config.04-lsp")
-require("config.05-telescope")
-require("config.06-treesitter")
-require("config.07-cmp")
-require("config.08-ui")
+-- Defer loading plugin configs to give lazy.nvim time to install
+vim.defer_fn(function()
+  require("config.01-colors")
+  require("config.04-lsp")
+  require("config.05-telescope")
+  require("config.06-treesitter")
+  require("config.07-cmp")
+  require("config.08-ui")
+end, 500)
