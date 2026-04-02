@@ -98,11 +98,10 @@ fi
 
 # Bootstrap lazy.nvim and sync plugins (without loading full config)
 echo "Installing plugins..."
-LAZY_PATH="$(nvim --version | head -1 | awk '{print $2}')"
 LAZY_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim-data/lazy/lazy.nvim"
 if [ ! -d "$LAZY_DIR" ]; then
     mkdir -p "$(dirname "$LAZY_DIR")"
-    git clone --filter=blob:none https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
+    git clone --filter=blob:none --branch v10 https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
 fi
 
 set +e
