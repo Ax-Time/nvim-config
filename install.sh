@@ -99,7 +99,7 @@ fi
 # Install plugins
 echo "Installing plugins..."
 set +e
-nvim --headless "+Lazy! sync" +qa
+nvim --headless -c "Lazy! sync" -c "qa" 2>&1
 if [ $? -ne 0 ]; then
     set -e
     echo "Error: Failed to install plugins"
