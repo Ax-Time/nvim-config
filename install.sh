@@ -101,7 +101,7 @@ echo "Installing plugins..."
 LAZY_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim-data/lazy/lazy.nvim"
 if [ ! -d "$LAZY_DIR" ]; then
     mkdir -p "$(dirname "$LAZY_DIR")"
-    git clone --filter=blob:none --branch v10 https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
+    git clone --filter=blob:none --depth 1 --branch v9.9.0 https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
 fi
 
 set +e
