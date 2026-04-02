@@ -96,10 +96,15 @@ if ! git clone "$REPO_URL" "$CONFIG_DIR"; then
     exit 1
 fi
 
-# Install plugins
+# Bootstrap lazy.nvim and sync plugins
 echo "Installing plugins..."
+LAZY_PATH="$HOME/.local/share/nvim/lazy/lazy.nvim"
+if [ ! -d "$LAZY_PATH" ]; then
+    git clone --filter=blob:none https://github.com/folke/lazy.nvim.git "$LAZY_PATH"
+fi
+
 set +e
-nvim --headless -c "Lazy! sync" -c "qa" 2>&1
+nvim --headless -u "$CONFIG_DIR/init.lua" --cmd "lua vim.opt.rtp:prepend('$LAZY_PATH'); require('lazy').setup(require('config.03-plugins')); vim.defer_fn(function() require('lazy').sync({ wait = true }); vim.cmd('qa') end, 100)" 2>&1
 if [ $? -ne 0 ]; then
     set -e
     echo "Error: Failed to install plugins"
