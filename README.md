@@ -4,7 +4,7 @@ A best-in-class Neovim configuration with lazy loading, LSP support, fuzzy findi
 
 ## Installation
 
-Requires Neovim 0.9+ and curl.
+Requires curl.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Ax-Time/nvim-config/main/install.sh | bash
