@@ -20,39 +20,17 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "<leader>lf", vim.lsp.buf.format, opts)
   vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
   vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-end)
+end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-require("lspconfig").lua_ls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
-require("lspconfig").tsserver.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
-require("lspconfig").rust_analyzer.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
-require("lspconfig").pyright.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
-require("lspconfig").gopls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
-require("lspconfig").clangd.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
+local servers = { "lua_ls", "tsserver", "rust_analyzer", "pyright", "gopls", "clangd" }
+for _, server in ipairs(servers) do
+  require("lspconfig")[server].setup({
+    on_attach = on_attach,
+    capabilities = capabilities,
+  })
+end
 
 vim.diagnostic.config({
   virtual_text = true,
