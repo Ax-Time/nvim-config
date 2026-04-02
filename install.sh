@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Neovim config installer - v2
 set -e
 
 REPO_URL="${REPO_URL:-git@github.com:Ax-Time/nvim-config.git}"
