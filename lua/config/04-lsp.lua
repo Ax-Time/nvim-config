@@ -2,7 +2,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
   ensure_installed = {
     "lua_ls",
-    "tsserver",
+    "ts_ls",
     "rust_analyzer",
     "pyright",
     "gopls",
@@ -24,13 +24,42 @@ end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-local servers = { "lua_ls", "tsserver", "rust_analyzer", "pyright", "gopls", "clangd" }
-for _, server in ipairs(servers) do
-  require("lspconfig")[server].setup({
-    on_attach = on_attach,
-    capabilities = capabilities,
-  })
-end
+vim.lsp.config('lua_ls', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.config('ts_ls', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.config('rust_analyzer', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.config('pyright', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.config('gopls', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.config('clangd', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+vim.lsp.enable('lua_ls')
+vim.lsp.enable('ts_ls')
+vim.lsp.enable('rust_analyzer')
+vim.lsp.enable('pyright')
+vim.lsp.enable('gopls')
+vim.lsp.enable('clangd')
 
 vim.diagnostic.config({
   virtual_text = true,
