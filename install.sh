@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
-# Neovim config installer - v2
 set -e
 
 REPO_URL="${REPO_URL:-git@github.com:Ax-Time/nvim-config.git}"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
-NVIM_MIN_VERSION="0.9"
 
 echo "Installing Neovim config from $REPO_URL"
 
@@ -96,30 +94,41 @@ if ! git clone "$REPO_URL" "$CONFIG_DIR"; then
     exit 1
 fi
 
-# Bootstrap lazy.nvim and sync plugins (without loading full config)
-echo "Installing plugins..."
-LAZY_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim-data/lazy/lazy.nvim"
-if [ ! -d "$LAZY_DIR" ]; then
-    mkdir -p "$(dirname "$LAZY_DIR")"
-    git clone --filter=blob:none --depth 1 --branch v9.9.0 https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
-fi
+# Create minimal bootstrap script
+BOOTSTRAP_INIT="$CONFIG_DIR/bootstrap.lua"
+cat > "$BOOTSTRAP_INIT" << 'BOOTSCRIPT'
+-- Minimal bootstrap for headless plugin install
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if vim.uv.fs_stat(lazypath) == nil then
+  vim.fn.system({
+    "git", "clone", "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
 
+-- Load plugins and sync
+require("config.03-plugins")
+vim.defer_fn(function()
+  require("lazy").sync({ wait = true })
+  vim.cmd("qa")
+end, 0)
+BOOTSCRIPT
+
+# Install plugins using bootstrap init
+echo "Installing plugins..."
 set +e
-nvim --headless \
-    --noplugin \
-    -u NONE \
-    -c "set rtp+=$LAZY_DIR" \
-    -c "set rtp+=$CONFIG_DIR" \
-    -c "lua vim.opt.rtp:prepend('$LAZY_DIR')" \
-    -c "lua vim.opt.rtp:prepend('$CONFIG_DIR')" \
-    -c "lua require('config.03-plugins')" \
-    -c "lua require('lazy').sync({ wait = true }); vim.cmd('qa')" 2>&1
-if [ $? -ne 0 ]; then
-    set -e
+nvim --headless -u "$BOOTSTRAP_INIT" -c "qa" 2>&1
+RESULT=$?
+rm -f "$BOOTSTRAP_INIT"
+set -e
+
+if [ $RESULT -ne 0 ]; then
     echo "Error: Failed to install plugins"
     exit 1
 fi
-set -e
 
 echo ""
 echo "Installation complete! Run 'nvim' to start."
