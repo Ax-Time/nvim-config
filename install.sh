@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO_URL="${REPO_URL:-https://github.com/axtime/nvim-config}"
+REPO_URL="${REPO_URL:-git@github.com:Ax-Time/nvim-config.git}"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
 NVIM_MIN_VERSION="0.9"
 
