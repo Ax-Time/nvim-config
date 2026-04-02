@@ -4,17 +4,17 @@ require("lazy").setup({
   { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
   { "williamboman/mason.nvim", cmd = "Mason", build = ":MasonUpdate" },
-  { "williamboman/mason-lspconfig.nvim" },
-  { "neovim/nvim-lspconfig" },
+  { "williamboman/mason-lspconfig.nvim", dependencies = { "williamboman/mason.nvim" } },
+  { "neovim/nvim-lspconfig", dependencies = { "williamboman/mason-lspconfig.nvim" } },
 
   { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
-  { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+  { "nvim-telescope/telescope-fzf-native.nvim", build = "make", optional = true },
 
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
 
   { "hrsh7th/nvim-cmp" },
-  { "hrsh7th/cmp-nvim-lsp" },
+  { "hrsh7th/cmp-nvim-lsp", dependencies = { "nvim-lspconfig", "hrsh7th/nvim-cmp" } },
   { "hrsh7th/cmp-buffer" },
   { "hrsh7th/cmp-path" },
   { "hrsh7th/cmp-cmdline" },
