@@ -6,6 +6,7 @@ require("lazy").setup({
   { "williamboman/mason.nvim", cmd = "Mason", build = ":MasonUpdate" },
   { "williamboman/mason-lspconfig.nvim", dependencies = { "williamboman/mason.nvim" } },
   { "neovim/nvim-lspconfig", dependencies = { "williamboman/mason-lspconfig.nvim" } },
+  { "simrat39/rust-tools.nvim" },
 
   { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make", optional = true },
