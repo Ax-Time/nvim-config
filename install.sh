@@ -33,6 +33,54 @@ check_nvim() {
     return 1
 }
 
+# Check/install Go (required for gopls)
+check_go() {
+    if command -v go &>/dev/null; then
+        local version=$(go version | awk '{print $3}')
+        echo "Go $version found"
+        return 0
+    fi
+    return 1
+}
+
+install_go() {
+    local os=$1
+    echo "Installing Go..."
+
+    case $os in
+        macos)
+            if command -v brew &>/dev/null; then
+                brew install go
+            else
+                echo "Error: Homebrew not found. Install from https://brew.sh"
+                exit 1
+            fi
+            ;;
+        linux-apt)
+            local goversion="go1.22.3"
+            local arch=$(uname -m)
+            [ "$arch" = "x86_64" ] && arch="amd64" || [ "$arch" = "aarch64" ] && arch="arm64"
+            wget -q "https://go.dev/dl/${goversion}.linux-${arch}.tar.gz" -O /tmp/go.tar.gz
+            sudo rm -rf /usr/local/go
+            sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+            rm /tmp/go.tar.gz
+            ;;
+        linux-dnf)
+            sudo dnf install -y golang
+            ;;
+        *)
+            echo "Error: Unsupported OS for Go installation"
+            exit 1
+            ;;
+    esac
+
+    if ! check_go; then
+        echo "Error: Go installation verification failed"
+        echo "You may need to restart your shell or run: export PATH=\$PATH:/usr/local/go/bin"
+        return 1
+    fi
+}
+
 install_nvim() {
     local os=$1
     echo "Installing Neovim..."
@@ -77,6 +125,13 @@ if ! check_nvim; then
         echo "Error: Neovim installation verification failed"
         exit 1
     fi
+fi
+set -e
+
+set +e
+if ! check_go; then
+    set -e
+    install_go "$OS"
 fi
 set -e
 
