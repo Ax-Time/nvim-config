@@ -20,11 +20,6 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "<leader>lf", function() vim.lsp.buf.format({ timeout_ms = 10000 }) end, opts)
   vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
   vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    buffer = bufnr,
-    callback = function() vim.lsp.buf.format({ timeout_ms = 10000 }) end,
-  })
 end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
